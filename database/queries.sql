@@ -37,10 +37,11 @@ ORDER BY id ASC;
 -- 2. MÉTRICAS FINANCEIRAS E FATURAMENTO
 -- ============================================================================
 
--- 2.1. Faturamento Total Comparativo (Agosto vs Setembro/2026)
+-- 2.1. Faturamento Total Comparativo (Agosto vs Setembro vs Outubro/2026)
 SELECT
     SUM(CASE WHEN data BETWEEN '2026-08-01' AND '2026-08-31' THEN valor_final ELSE 0 END) AS total_faturamento_ago,
-    SUM(CASE WHEN data BETWEEN '2026-09-01' AND '2026-09-30' THEN valor_final ELSE 0 END) AS total_faturamento_set
+    SUM(CASE WHEN data BETWEEN '2026-09-01' AND '2026-09-30' THEN valor_final ELSE 0 END) AS total_faturamento_set,
+    SUM(CASE WHEN data BETWEEN '2026-10-01' AND '2026-10-31' THEN valor_final ELSE 0 END) AS total_faturamento_out
 FROM registro_atendimento;
 
 
@@ -82,6 +83,14 @@ WHERE data BETWEEN '2026-08-01' AND '2026-08-31';
 SELECT 
     DATE_FORMAT(data, '%Y-%m') AS ano_mes, 
     SEC_TO_TIME(SUM(TIME_TO_SEC(TIMEDIFF(hora_final, hora_inicio)))) AS total_horas_trabalhadas
+FROM registro_atendimento
+GROUP BY DATE_FORMAT(data, '%Y-%m')
+ORDER BY ano_mes ASC;
+
+-- 4.4. Total faturado por cada mês (versão em linhas)
+SELECT
+	DATE_FORMAT(data, '%Y-%m') AS ano_mes,
+    SUM(valor_final) AS total_faturado
 FROM registro_atendimento
 GROUP BY DATE_FORMAT(data, '%Y-%m')
 ORDER BY ano_mes ASC;
